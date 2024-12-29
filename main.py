@@ -5,11 +5,13 @@ import numpy as np
 import random
 import win32api,win32con
 
+#! USE THE WORD "@NOTE@"
+
 TIME_FACTOR_DIV = 1
 
 CAN_TRAIN = False
 
-TRAIN_WITH_PLATINUM = True
+TRAIN_WITH_PLATINUM = False
 ELEMENT_INDEX = 0
 ELEMENTS_ARRAY_ACTUAL =  ["element00.png","element01.png"]
 GAMESTATES = ["outside", "inbattle", "afterbattle", "training"]
@@ -81,8 +83,14 @@ def find_element():
                 
 
 def battle():
+   
    if(GAMESTATE==GAMESTATES[1]):          
       try:
+          
+        #^@NOTE@
+        #CLICK THE RIGHT TRIANGLES UNTIL SMACK IS FOUND
+
+
           loc = pyautogui.locateCenterOnScreen("assets/png/ui00.png", confidence=0.45)
           pyautogui.moveTo(loc)
           pyautogui.click()
@@ -145,12 +153,15 @@ def train_miscrit():
             pass
 
     #?locate all the trainable miscrits        
+        
+
 
 
         try: 
             print("starting locateAllOnScreen")
-            trainable_miscrits_locs = (pyautogui.locateAllOnScreen("assets/png/ui05a.png", confidence=0.6))
+            trainable_miscrits_locs = (pyautogui.locateAllOnScreen("assets/png/ui05a.png", confidence=0.9))
             
+            #^ TEST            
 
             for loct in trainable_miscrits_locs:
 
@@ -161,21 +172,27 @@ def train_miscrit():
                 time.sleep(1)
                 
                 
-                
-                loc = pyautogui.locateCenterOnScreen("assets/png/ui07.png", confidence=0.6)
+                #* CHECK FOR EVOLUTIONS
+
+                loc = pyautogui.locateCenterOnScreen("assets/png/ui07.png", confidence=0.7)
                 pyautogui.moveTo(loc)
                 pyautogui.click()
                 time.sleep(1)          
 
 
                 if(TRAIN_WITH_PLATINUM):
-                    loc = pyautogui.locateCenterOnScreen("assets/png/ui08.png", confidence=0.6)
+                    loc = pyautogui.locateCenterOnScreen("assets/png/ui08.png", confidence=0.8)
                     pyautogui.moveTo(loc)
                     pyautogui.click()
                     time.sleep(1)          
               
+                #^@NOTE@                
+                #? Check if theres more to continue (When learning a new ability)
+                #? Also check for a skip
+                #? Another continue?
+
                     
-                loc = pyautogui.locateCenterOnScreen("assets/png/ui09.png", confidence=0.6)
+                loc = pyautogui.locateCenterOnScreen("assets/png/ui09.png", confidence=0.8)
                 pyautogui.moveTo(loc)
                 pyautogui.click()
                 time.sleep(1)   
@@ -188,7 +205,7 @@ def train_miscrit():
 
     try:
 
-        loc = pyautogui.locateCenterOnScreen("assets/png/ui10.png", confidence=0.5)
+        loc = pyautogui.locateCenterOnScreen("assets/png/ui10.png", confidence=0.8)
         CAN_TRAIN = False
         pyautogui.moveTo(loc)
         pyautogui.click()
@@ -197,6 +214,8 @@ def train_miscrit():
     except pyautogui.ImageNotFoundException:
         pass
 
+def heal_miscrits():
+    pass
     
 
 if __name__ == "__main__":
