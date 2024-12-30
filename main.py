@@ -7,18 +7,59 @@ import win32api,win32con
 
 #! USE THE WORD "@NOTE@"
 
-TIME_FACTOR_DIV = 1
 
 CAN_TRAIN = False
-
+NEED_HEAL = False
 TRAIN_WITH_PLATINUM = False
 ELEMENT_INDEX = 0
+
 ELEMENTS_ARRAY_ACTUAL =  ["element00.png","element01.png"]
+FILLER_PROMPTS = ["ui03.png","ui06a.png", "ui09.png", "ui15.png"]
 GAMESTATES = ["outside", "inbattle", "afterbattle", "training"]
 GAMESTATE = GAMESTATES[0]
 
 #entranceToTown = (213,507)
 #entranceToForest = (700,280) #not accurate yet, UPDATE: NOT NEEDED, ELEMENTS COOLDOWN
+
+def click_images_until_none(images, confidence=0.8, delay=1):
+    
+    try:
+        while True:
+            found_any = False
+
+            for image in images:
+                try:
+                     
+                    locations = list(pyautogui.locateAllOnScreen("assets/png/" + image, confidence=confidence, grayscale=True))
+
+                    if locations:
+                        found_any = True
+                        print(f"Found {len(locations)} instances of {image}")
+
+                         
+                        for loc in locations:
+                            center = pyautogui.center(loc)
+                            pyautogui.moveTo(center)
+                            pyautogui.click()
+                            time.sleep(delay)
+
+                except pyautogui.ImageNotFoundException:
+                    # 
+                    print(f"Image {image} not found.")
+                    continue
+
+                except Exception as e:
+                    
+                    print(f"Unexpected error with image {image}: {e}")
+                    continue
+
+            if not found_any:
+                print("No images found. Ending.")
+                break
+    except KeyboardInterrupt:
+        print("Interrupted by user. Exiting.")
+
+        
 
 def print_gamestate():
    global GAMESTATE   
@@ -37,7 +78,7 @@ def check_gamestate():
         pass
 
     try:
-        if (pyautogui.locateOnScreen("assets/png/ui00.png", confidence=0.7) is not None):
+        if (pyautogui.locateOnScreen("assets/png/ui13.png", confidence=0.7) is not None):
             GAMESTATE = GAMESTATES[1]
             #print_gamestate()
 
@@ -88,10 +129,22 @@ def battle():
       try:
           
         #^@NOTE@
-        #CLICK THE RIGHT TRIANGLES UNTIL SMACK IS FOUND
+        #CLICK THE RIGHT TRIANGLES UNTIL SMACK IS FOUND    
+          loc = pyautogui.locateCenterOnScreen("assets/png/ui00.png", confidence=0.8)
+
+          if(loc is None):
+
+            try: 
+                pyautogui.moveTo(pyautogui.locateCenterOnScreen("assets/png/ui14.png", confidence=0.7,grayscale=True))
+                pyautogui.click()
+                print("Clicking arrow until finding attack")  
+                loc = pyautogui.locateCenterOnScreen("assets/png/ui00.png", confidence=0.8)
+                time.sleep(0.3)
+
+            except pyautogui.ImageNotFoundException:
+                print("Couldn't click attacks arrow.")
 
 
-          loc = pyautogui.locateCenterOnScreen("assets/png/ui00.png", confidence=0.45)
           pyautogui.moveTo(loc)
           pyautogui.click()
           time.sleep(1)
@@ -187,15 +240,15 @@ def train_miscrit():
                     time.sleep(1)          
               
                 #^@NOTE@                
-                #? Check if theres more to continue (When learning a new ability)
-                #? Also check for a skip
-                #? Another continue?
+
 
                     
                 loc = pyautogui.locateCenterOnScreen("assets/png/ui09.png", confidence=0.8)
                 pyautogui.moveTo(loc)
                 pyautogui.click()
                 time.sleep(1)   
+
+                click_images_until_none(FILLER_PROMPTS)
            
         except pyautogui.ImageNotFoundException:
             pass
@@ -215,7 +268,21 @@ def train_miscrit():
         pass
 
 def heal_miscrits():
-    pass
+    global NEED_HEAL
+
+    if(GAMESTATE==GAMESTATES[0] and NEED_HEAL):
+
+        try:             
+            loc = pyautogui.locateCenterOnScreen("assets/png/ui04.png", confidence=0.65)
+
+            pyautogui.moveTo(loc)
+            pyautogui.click()                        
+            NEED_HEAL = False
+
+        except pyautogui.ImageNotFoundException:
+            pass
+
+        
     
 
 if __name__ == "__main__":
@@ -230,13 +297,20 @@ if __name__ == "__main__":
 
     check_gamestate()
     time.sleep(0.1)
-    find_element()
+
+    find_element()    
     time.sleep(0.1)
+
     battle()
     time.sleep(0.1)
+
     after_battle()
     time.sleep(0.1)
+
     train_miscrit()
+    time.sleep(0.1)
+
+    heal_miscrits()
     time.sleep(0.1)
 
 
