@@ -4,9 +4,12 @@ import keyboard
 import numpy as np
 import random
 import win32api,win32con
+import pygetwindow as gw
 
 #! USE THE WORD "@NOTE@"
 
+window_title = "Miscrits (DEBUG)"
+window = gw.getWindowsWithTitle(window_title)[0]  # Get the first match
 
 CAN_TRAIN = False
 NEED_HEAL = False
@@ -14,50 +17,58 @@ TRAIN_WITH_PLATINUM = False
 ELEMENT_INDEX = 0
 
 ELEMENTS_ARRAY_ACTUAL =  ["element00.png","element01.png"]
-FILLER_PROMPTS = ["ui03.png","ui06a.png", "ui09.png", "ui15.png"]
+FILLER_PROMPTS = ["ui03.png","ui06a.png", "ui09.png", "ui15.png", "ui17.png"]
 GAMESTATES = ["outside", "inbattle", "afterbattle", "training"]
 GAMESTATE = GAMESTATES[0]
 
 #entranceToTown = (213,507)
 #entranceToForest = (700,280) #not accurate yet, UPDATE: NOT NEEDED, ELEMENTS COOLDOWN
 
-def click_images_until_none(images, confidence=0.8, delay=1):
-    
-    try:
-        while True:
-            found_any = False
+def click_images_until_none(images, confidence=0.7, delay=1):
 
-            for image in images:
-                try:
-                     
-                    locations = list(pyautogui.locateAllOnScreen("assets/png/" + image, confidence=confidence, grayscale=True))
+    if window:
+        x, y, width, height = window.left, window.top, window.width, window.height
 
-                    if locations:
-                        found_any = True
-                        #print(f"\n Found {len(locations)} instances of {image}")
+        # Step 2: Define a region (e.g., with margins)
+        margin = 10  # Adjust the margin as needed
+        region = (x + margin, y + margin+200, width - 2 * margin, height - 2 * margin)
+        print("Checking for extra prompts/stuff")
+        
+        try:
+            while True:
+                found_any = False
 
-                         
-                        for loc in locations:
-                            center = pyautogui.center(loc)
-                            pyautogui.moveTo(center)
-                            pyautogui.click()
-                            time.sleep(delay)
+                for image in images:
+                    try:
+                        
+                        locations = list(pyautogui.locateAllOnScreen("assets/png/" + image,region=region, confidence=confidence))
 
-                except pyautogui.ImageNotFoundException:
-                    # 
-                    print(f"\n Image {image} not found. \n")
-                    continue
+                        if locations:
+                            found_any = True
+                            print(f"\n Found {len(locations)} instances of {image}")
 
-                except Exception as e:
-                    
-                    #print(f"Unexpected error with image {image}: {e}")
-                    continue
+                            
+                            for loc in locations:
+                                center = pyautogui.center(loc)
+                                pyautogui.moveTo(center)
+                                pyautogui.click()
+                                time.sleep(delay)
 
-            if not found_any:
-                #print("No images found. Ending.")
-                break
-    except KeyboardInterrupt:
-        print("Interrupted by user. Exiting.")
+                    except pyautogui.ImageNotFoundException:
+                        # 
+                        print(f"\n Image {image} not found. \n")
+                        continue
+
+                    except Exception as e:
+                        
+                        #print(f"Unexpected error with image {image}: {e}")
+                        continue
+
+                if not found_any:
+                    #print("No images found. Ending.")
+                    break
+        except KeyboardInterrupt:
+            print("Interrupted by user. Exiting.")
 
         
 
@@ -70,7 +81,7 @@ def check_gamestate():
     
 
     try:
-        if (pyautogui.locateOnScreen("assets/png/ui01.png", confidence=0.65) is not None):
+        if (pyautogui.locateOnScreen("assets/png/ui01.png", confidence=0.7) is not None):
             GAMESTATE = GAMESTATES[0]
             ELEMENT_INDEX = 1 if ELEMENT_INDEX == 0 else 0
             #print_gamestate()
@@ -87,7 +98,7 @@ def check_gamestate():
         pass
 
     try:
-        if (pyautogui.locateOnScreen("assets/png/ui02.png", confidence=0.65) is not None):
+        if (pyautogui.locateOnScreen("assets/png/ui02.png", confidence=0.7) is not None):
             GAMESTATE = GAMESTATES[2]
             #print_gamestate()
 
@@ -95,10 +106,7 @@ def check_gamestate():
         pass
 
 
-    try: 
-        pass
-    except pyautogui.ImageNotFoundException:
-        pass
+    
      
 
 def find_element():
@@ -173,7 +181,8 @@ def after_battle():
               pass
                  
           try:                     
-                fallen_crits = list(pyautogui.locateAllOnScreen("assets/png/ui16.png", confidence=0.8))
+                print("Checking miscrits health.")
+                fallen_crits = list(pyautogui.locateAllOnScreen("assets/png/ui16.png", confidence=0.9))
                 
                 print(f'#downed(Including enemy) {len(fallen_crits)}')
 
@@ -201,9 +210,7 @@ def after_battle():
 
 def train_miscrit():
     global CAN_TRAIN, GAMESTATE
-
      
-
     if(CAN_TRAIN):
 
         GAMESTATE = GAMESTATES[3]
@@ -306,7 +313,7 @@ if __name__ == "__main__":
         break
     
 
-    #print(f"Current GAMESTATE: {GAMESTATE}")
+    print(f"Current GAMESTATE: {GAMESTATE}")
     #print(f"Current ELEMENT_INDEX: {ELEMENT_INDEX}")
 
     check_gamestate()
@@ -329,11 +336,9 @@ if __name__ == "__main__":
     if(GAMESTATE==GAMESTATES[0]):
         click_images_until_none(FILLER_PROMPTS)
     
-
-
+ 
     # currMx,currMy = pyautogui.position()
     # print(currMx,currMy)
-    print(GAMESTATE)
-    #print(ELEMENTS_ARRAY_ACTUAL)
+
 
     time.sleep(0.2)
