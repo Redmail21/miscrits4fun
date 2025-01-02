@@ -135,12 +135,7 @@ def battle():
       try:
           
         
-          loc = pyautogui.locateCenterOnScreen("assets/png/ui00.png", confidence=0.85)
-          
-
-          
-
-
+          loc = pyautogui.locateCenterOnScreen("assets/png/ui00.png", confidence=0.85)   
           pyautogui.moveTo(loc)
           pyautogui.click()
           time.sleep(1)
@@ -155,7 +150,7 @@ def battle():
             time.sleep(0.3)
 
         except pyautogui.ImageNotFoundException:
-            print("Couldn't click attacks arrow.")
+            #print("Couldn't click attacks arrow.")
 
 
 def after_battle():
