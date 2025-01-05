@@ -1,7 +1,7 @@
-
 # miscrits4fun
 I love this game, but I don't have the time to grind.
-If you want to support me, buy me a candy https://ko-fi.com/billythecoffee
+<br> this is a script for automatically leveling up miscrits, so far it only works in the forest area, specifically in zones where sun flowers and light tree bushes are present (check the assets/png folder for reference), works best inside a Virtual machine (so you can do something else while it runs).
+<br> If you want to support me, buy me a candy https://ko-fi.com/billythecoffee
 
 To do:
 <br> Clean up the code
