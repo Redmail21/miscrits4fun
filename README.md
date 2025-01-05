@@ -1,5 +1,7 @@
+
 # miscrits4fun
 I love this game, but I don't have the time to grind.
+If you want to support me, buy me a candy https://ko-fi.com/billythecoffee
 
 To do:
 <br> Clean up the code
