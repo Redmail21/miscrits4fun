@@ -1,4 +1,8 @@
 # miscrits4fun
+
+---UPDATE---
+I have plans to rebuild the concept throghout a more modern and AI approach once I get the time to work on it, stay tuned!
+---UPDATE---
 I love this game, but I don't have the time to grind.
 <br>This is a script for automatically leveling up miscrits, so far it only works in the forest area, specifically in zones where sun flowers and light tree bushes are present (check the assets/png folder for reference), works best inside a Virtual machine (so you can do something else while it runs).
 
